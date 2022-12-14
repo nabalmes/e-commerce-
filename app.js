@@ -3,43 +3,42 @@ const app = express();
 const bodyParser = require('body-parser');
 const morgan = require('morgan');
 const mongoose = require('mongoose');
-
-
-
-
+const cors = require('cors')
 require('dotenv/config')
 
-const api = process.env.API_URL;
+
+app.use(cors());
+app.options('*', cors())
 
 //* Middleware
 app.use(bodyParser.json());
 app.use(morgan('tiny'));
 
-app.get(`${api}/products`, (req, res)=>{
-   const product = {
-    id: 1,
-    name: "neil",
-    age: 10
-   }
-   res.send(product)
-})
+//*Routes
+const categoryRoutes = require('./routers/r-category');
+const productsRoutes = require('./routers/r-products');
+const usersRoutes = require('./routers/r-users');
+const ordersRoutes = require('./routers/r-orders');
 
-app.post(`${api}/products`, (req, res)=> {
-    const newProduct = req.body;
-    console.log(newProduct);
-    res.send(newProduct)
-})
+const api = process.env.API_URL;
+
+app.use(`${api}/category`, categoryRoutes);
+app.use(`${api}/products`, productsRoutes);
+app.use(`${api}/users`, usersRoutes);
+app.use(`${api}/orders`, ordersRoutes);
+
+
 mongoose.set('strictQuery', false);
 mongoose.connect(process.env.CONNECTION_STRING)
 
 
-.then(()=> {
-    console.log('database ready');
-})
-.catch((err)=>{
-    console.log(err, 'anu na');
-})
+    .then(() => {
+        console.log('database ready');
+    })
+    .catch((err) => {
+        console.log(err, 'database error');
+    })
 
-app.listen(3000, ()=> {
+app.listen(3000, () => {
     console.log('server is running http://localhost:3000');
 })
