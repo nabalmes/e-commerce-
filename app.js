@@ -11,7 +11,7 @@ app.use(cors());
 app.options('*', cors())
 
 //* Middleware
-app.use(bodyParser.json());
+app.use(express.json())
 app.use(morgan('tiny'));
 
 //*Routes
